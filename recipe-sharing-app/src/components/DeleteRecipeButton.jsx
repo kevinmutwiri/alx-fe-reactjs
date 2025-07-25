@@ -1,0 +1,24 @@
+import React from 'react';
+import useRecipeStore from './recipeStore';
+
+const DeleteRecipeButton = ({ recipeId, onDeleteSuccess }) => {
+  const deleteRecipe = useRecipeStore((state) => state.deleteRecipe);
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to permanently delete this recipe?')) {
+      deleteRecipe(recipeId);
+      onDeleteSuccess();
+    }
+  };
+
+  return (
+    <button
+      onClick={handleDelete}
+      className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline transition-colors duration-200"
+    >
+      Delete Recipe
+    </button>
+  );
+};
+
+export default DeleteRecipeButton;
