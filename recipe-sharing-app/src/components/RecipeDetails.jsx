@@ -49,7 +49,7 @@ const RecipeDetails = () => {
             >
               Edit Recipe
             </button>
-            <DeleteRecipeButton recipeId={recipe.id} onDeleteSuccess={() => navigate('/')} />
+            <DeleteRecipeButton recipeId={recipe.id} />
             <button
               onClick={() => navigate('/')}
               className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline transition-colors duration-200"
