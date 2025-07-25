@@ -12,7 +12,13 @@ const RecipeDetails = () => {
     state.recipes.find((r) => r.id === parseInt(recipeId))
   );
 
+  const favorites = useRecipeStore((state) => state.favorites);
+  const addFavorite = useRecipeStore((state) => state.addFavorite);
+  const removeFavorite = useRecipeStore((state) => state.removeFavorite);
+
   const [isEditing, setIsEditing] = useState(false);
+
+  const isFavorite = recipe ? favorites.includes(recipe.id) : false;
 
   if (!recipe) {
     return (
@@ -39,7 +45,19 @@ const RecipeDetails = () => {
         />
       ) : (
         <>
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-4">{recipe.title}</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-4 flex justify-between items-center">
+            {recipe.title}
+            <button
+              onClick={() => (isFavorite ? removeFavorite(recipe.id) : addFavorite(recipe.id))}
+              className={`ml-4 px-4 py-2 rounded-full text-lg font-medium transition-colors duration-200 ${
+                isFavorite
+                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {isFavorite ? '★ Favorited' : '☆ Favorite'}
+            </button>
+          </h1>
           <p className="text-gray-700 leading-relaxed mb-6">{recipe.description}</p>
 
           <div className="flex flex-wrap gap-3 mt-6">

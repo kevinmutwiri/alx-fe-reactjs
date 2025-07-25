@@ -4,6 +4,9 @@ import './App.css';
 import RecipeList from './components/RecipeList';
 import AddRecipeForm from './components/AddRecipeForm';
 import RecipeDetails from './components/RecipeDetails';
+import SearchBar from './components/SearchBar';
+import FavoritesList from './components/FavoritesList';
+import RecommendationsList from './components/RecommendationsList';
 
 function App() {
   return (
@@ -36,7 +39,12 @@ function App() {
                 <>
                   <AddRecipeForm />
                   <hr className="my-10 border-t-2 border-gray-200" />
+                  <SearchBar />
                   <RecipeList />
+                  <hr className="my-10 border-t-2 border-gray-200" />
+                  <FavoritesList />
+                  <hr className="my-10 border-t-2 border-gray-200" />
+                  <RecommendationsList />
                 </>
               }
             />
