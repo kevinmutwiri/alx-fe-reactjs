@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
-import { searchUsers } from '../services/githubService';
+import { fetchUserData } from '../services/githubService';
 
 const Search = () => {
     const [username, setUsername] = useState('');
     const [location, setLocation] = useState('');
     const [minRepos, setMinRepos] = useState('');
-    const [users, setUsers] = useState([]);
+    const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!username.trim()) return;
-
         setLoading(true);
-        setError('');
-        setUsers([]);
+        setError(null);
+        setResults([]);
 
         try {
-            const results = await searchUsers({ username, location, minRepos });
-            setUsers(results);
+            const users = await fetchUserData({ username, location, minRepos });
+            if (users.length === 0) {
+                setError('Looks like we cant find the user');
+            } else {
+                setResults(users);
+            }
         } catch (err) {
             setError('Looks like we cant find the user');
         } finally {
@@ -28,33 +30,42 @@ const Search = () => {
     };
 
     return (
-        <div className="max-w-xl mx-auto mt-10 p-4 bg-white rounded-lg shadow-md">
+        <div className="max-w-2xl mx-auto p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                    type="text"
-                    placeholder="Username (required)"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Location (optional)"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                />
-                <input
-                    type="number"
-                    placeholder="Minimum Repositories (optional)"
-                    value={minRepos}
-                    onChange={(e) => setMinRepos(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                />
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Username</label>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                        placeholder="e.g. octocat"
+                        required
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Location</label>
+                    <input
+                        type="text"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                        placeholder="e.g. Kenya"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Minimum Repositories</label>
+                    <input
+                        type="number"
+                        value={minRepos}
+                        onChange={(e) => setMinRepos(e.target.value)}
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                        placeholder="e.g. 10"
+                    />
+                </div>
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                 >
                     Search
                 </button>
@@ -63,25 +74,30 @@ const Search = () => {
             <div className="mt-6">
                 {loading && <p className="text-gray-600">Loading...</p>}
                 {error && <p className="text-red-500">{error}</p>}
-                {users.length > 0 && (
-                    <div className="space-y-4 mt-4">
-                        {users.map((user) => (
-                            <div key={user.id} className="p-4 border rounded flex items-center space-x-4">
-                                <img src={user.avatar_url} alt={user.login} className="w-16 h-16 rounded-full" />
+                {results.length > 0 && (
+                    <ul className="space-y-4">
+                        {results.map((user) => (
+                            <li key={user.id} className="flex items-center space-x-4 p-4 border rounded">
+                                <img
+                                    src={user.avatar_url}
+                                    alt={user.login}
+                                    className="w-12 h-12 rounded-full"
+                                />
                                 <div>
-                                    <p className="font-bold">{user.login}</p>
+                                    <p className="font-semibold">{user.login}</p>
                                     <a
                                         href={user.html_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-blue-500"
+                                        className="text-blue-600 hover:underline"
                                     >
                                         View Profile
                                     </a>
+                                    {/* Optional: location requires extra fetch per user, so skip it unless enhanced */}
                                 </div>
-                            </div>
+                            </li>
                         ))}
-                    </div>
+                    </ul>
                 )}
             </div>
         </div>
