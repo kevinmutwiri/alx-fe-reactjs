@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://api.github.com/search/users';
+const BASE_URL = 'https://api.github.com/search/users?q';
 
 export const searchUsers = async ({ username, location, minRepos }) => {
   const headers = {};
@@ -10,13 +10,13 @@ export const searchUsers = async ({ username, location, minRepos }) => {
     headers.Authorization = `token ${token}`;
   }
 
-  // Build the search query string
+  // Build the GitHub Search API query string
   let query = `${username}`;
   if (location) query += `+location:${location}`;
   if (minRepos) query += `+repos:>=${minRepos}`;
 
-  const url = `${BASE_URL}?q=${query}`;
+  const url = `${BASE_URL}${query ? encodeURIComponent(query) : ''}`;
 
   const response = await axios.get(url, { headers });
-  return response.data.items; // returns array of users
+  return response.data.items; // array of users
 };
